@@ -2,7 +2,19 @@
 import { pool } from "./db/index.js";
 
 export async function getOrders() {
-  // Query the database and return all resource ones
+  try {
+    // Define the query that will return all orders
+    const queryText = `SELECT * FROM orders`;
+
+    // Send the query to the DB using the pool method. This will return the data and store it into an object
+    const queryResult = await pool.query(queryText);
+
+    //The queryRestul object has a method called rows which contains the retrieved cars
+    return queryResult.rows;
+  } catch (error) {
+    console.error("Error executing query", error);
+    return [];
+  }
 }
 
 export async function getOrderById(id) {

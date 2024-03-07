@@ -2,7 +2,19 @@
 import { pool } from "./db/index.js";
 
 export async function getCustomers() {
-  // Query the database and return all resource ones
+  try {
+    // Define the query that will return all customers
+    const queryText = `SELECT * FROM customers`;
+
+    // Send the query to the DB using the pool method. this will return an object which is stored in queryResult
+    const queryResult = await pool.query(queryText);
+
+    //The queryRestul object has a method called rows which contains the retrieved cars
+    return queryResult.rows;
+  } catch (error) {
+    console.error("Error executing query", error);
+    return [];
+  }
 }
 
 export async function getCustomerById(id) {

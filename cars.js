@@ -1,8 +1,21 @@
 // Import the 'pool' object so our helper functions can interact with the PostgreSQL database
 import { pool } from "./db/index.js";
 
+// 1
 export async function getCars() {
-  // Query the database and return all resource twos
+  try {
+    // Define the SQL query that will return all cars
+    const queryText = `SELECT * FROM Cars`;
+
+    // Send the query to the DB using the pool object
+    const queryResult = await pool.query(queryText);
+
+    //The queryRestul object has a method called rows which contains the retrieved cars
+    return queryResult.rows;
+  } catch (error) {
+    console.error("Error executing query", error);
+    return [];
+  }
 }
 
 export async function getCarById(id) {
