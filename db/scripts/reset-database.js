@@ -11,44 +11,78 @@ async function resetDatabase() {
   try {
     // Drop existing tables if they exist
     await pool.query(`
-        DROP TABLE IF EXISTS artists CASCADE;
-        DROP TABLE IF EXISTS albums CASCADE;
+        DROP TABLE IF EXISTS customers CASCADE;
+        DROP TABLE IF EXISTS sales CASCADE;
+        DROP TABLE IF EXISTS cars CASCADE;
     `);
 
-    // Create the artists table
+    // Create the customers table
     await pool.query(`
-        CREATE TABLE artists (
-            id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            name VARCHAR(255) NOT NULL
+        CREATE TABLE customers (
+            customer_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            phone VARCHAR(16)
         );
     `);
 
-    // Create the albums table with a foreign key to the artists table
     await pool.query(`
-        CREATE TABLE albums (
-            id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-            title VARCHAR(255) NOT NULL,
-            published_date DATE,
-            artist_id INT REFERENCES artists(id)
+        CREATE TABLE cars (
+            car_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+            make VARCHAR(255) NOT NULL,
+            model VARCHAR(255) NOT NULL,
+            price DECIMAL NOT NULL
         );
     `);
 
-    // Seed the artists table
+    // Create the sales table with a foreign key to the customers table
     await pool.query(`
-        INSERT INTO artists (name)
-        VALUES 
-            ('Dua Lipa'),
-            ('Jay-Z');
+        CREATE TABLE sales (
+            sale_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+            car_id INT REFERENCES cars(car_id),
+            customer_id INT REFERENCES customers(customer_id),
+            sale_date DATE NOT NULL,
+            sale_price DECIMAL NOT NULL
+        );
     `);
 
-    // Seed the albums table
+    // Seed the customers table
     await pool.query(`
-        INSERT INTO albums (title, published_date, artist_id)
+        INSERT INTO customers (name, email, phone) 
         VALUES 
-            ('Dua Lipa', '2017-06-02', 1),
-            ('Future Nostalgia', '2020-03-27', 1),
-            ('Reasonable Doubt', '1996-06-25', 2),
-            ('The Blueprint', '2001-09-11', 2);
+            ('Alice Smith', 'alice.smith@example.co.uk', '+44 7123 456 789'),
+            ('Bob Johnson', 'bob.johnson@example.co.uk', '+44 7123 456 790'),
+            ('Charlie Brown', 'charlie.brown@example.co.uk', '+44 7123 456 791'),
+            ('Danielle White', 'd.white@example.co.uk', '+44 7123 456 792'),
+            ('Ethan Davis', 'ethan.davis@example.co.uk', '+44 7123 456 793');
+            `);
+
+    // Seed the cars table with luxury cars
+    await pool.query(`
+    INSERT INTO cars (make, model, price) 
+    VALUES 
+        ('Porsche', '911', 90000),
+        ('Lamborghini', 'Huracan', 200000),
+        ('Ferrari', '488', 250000),
+        ('Bentley', 'Continental GT', 198000),
+        ('Aston Martin', 'DB11', 201000),
+        ('Rolls Royce', 'Ghost', 300000),
+        ('Maserati', 'Ghibli', 70000),
+        ('McLaren', '570S', 190000),
+        ('Bugatti', 'Chiron', 3000000),
+        ('Tesla', 'Model S', 80000);
+    `);
+
+            
+    // Seed the cars table
+    await pool.query(`
+        INSERT INTO sales (car_id, customer_id, sale_date, sale_price) 
+        VALUES 
+        (1, 1, '2024-03-01', 88000),
+        (2, 2, '2024-03-16', 195000),
+        (3, 3, '2024-03-18', 245000),
+        (4, 4, '2024-03-27', 193000),
+        (5, 5, '2024-03-27', 196000);
     `);
 
     console.log("Database reset successful");
