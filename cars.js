@@ -19,7 +19,20 @@ export async function getCars() {
 }
 
 export async function getCarById(id) {
-  // Query the database and return the resource with a matching id or null
+  try {
+    // Define the SQL query that will return a car with a matching id or null
+
+    const queryText = `SELECT * FROM Cars WHERE car_id =$1`;
+
+    // Send the query to the DB using the pool object
+    const queryResult = await pool.query(queryText);
+
+    //The queryRestul object has a method called rows which contains the retrieved cars
+    return queryResult.rows;
+  } catch (error) {
+    console.error("Error executing query", error);
+    return [];
+  }
 }
 
 export async function createCar(resource) {

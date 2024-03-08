@@ -19,7 +19,7 @@ import express from "express";
 //   deleteCustomerById,
 // } from "./customers.js";
 
-// Import your helper functions for orders here
+// Import your helper functions for sales here
 // import {
 //   getOrders,
 //   getOrderById,
@@ -78,22 +78,22 @@ app.delete("/customers/:id", async function (req, res) {});
 // Resource Orders Handlers
 
 // Endpoint to retrieve all Orders
-app.get("/orders/", async function (req, res) {
+app.get("/sales/", async function (req, res) {
   const authors = await getAuthors();
   res.status(200).json({ status: "success", data: authors });
 });
 
 // Endpoint to retrieve an Order by id
-app.get("/orders/:id", async function (req, res) {});
+app.get("/sales/:id", async function (req, res) {});
 
 // Endpoint to create a new Order
-app.post("/orders/", async function (req, res) {});
+app.post("/sales/", async function (req, res) {});
 
 // Endpoint to update a specific Order by id
-app.patch("/orders/:id", async function (req, res) {});
+app.patch("/sales/:id", async function (req, res) {});
 
 // Endpoint to delete a specific Order by id
-app.delete("/orders/:id", async function (req, res) {});
+app.delete("/sales/:id", async function (req, res) {});
 
 // Start the server and listen on the specified port
 app.listen(PORT, function () {
