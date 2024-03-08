@@ -43,16 +43,25 @@ export async function createCustomer(customer) {
     // Assign params to an array
     const queryParams = [customer.name, customer.email, customer.phone];
     
+    let errorDisplay = []
+
     try {
       if (!customer.name) {
-        errorMsg = `customer name is null, please enter it correctly to complete the request`
-        return [false, errorMsg]
-      } else if (!customer.email) {
-        errorMsg = `email is null, please enter it correctly to complete the request`
-        return [false, errorMsg]
-      } else if (!customer.phone) {
-        errorMsg = `phone is null, please enter it correctly to complete the request`
-        return [false, errorMsg]
+        errorDisplay.push('Customer name')
+        // errorMsg = `customer name is null, please enter it correctly to complete the request`
+        // return [false, errorMsg]
+      } if (!customer.email) {
+        errorDisplay.push('Email')
+        // errorMsg = `email is null, please enter it correctly to complete the request`
+        // return [false, errorMsg]
+      } if (!customer.phone) {
+        errorDisplay.push('Phone')
+        // errorMsg = `phone is null, please enter it correctly to complete the request`
+        // return [false, errorMsg]
+      }
+      
+      if (errorDisplay) {
+      return [false, `${errorDisplay.join(', ')} is incorrect or missing, please enter it correctly to complete the request`]
       }
       
       // execute the query
