@@ -7,7 +7,6 @@ export async function getCustomers() {
   const queryText = `SELECT * from customers`
   try {
     const { rows } = await pool.query(queryText);
-
     return rows || null;
   }
   catch (error) {
@@ -20,7 +19,6 @@ export async function getCustomerById(id) {
   const queryText = `SELECT * FROM customers WHERE customer_id = $1`
   try {
     const { rows } = await pool.query(queryText, [id]);
-
     return rows[0] || null
   }
   catch (error) {
@@ -37,14 +35,11 @@ export async function createCustomer(customer) {
     VALUES ($1, $2, $3)
     RETURNING *;
     `
-
     let errorMsg = "";
-
     // Assign params to an array
     const queryParams = [customer.name, customer.email, customer.phone];
     
     let errorDisplay = []
-
     try {
       if (!customer.name) {
         errorDisplay.push('Customer name')
@@ -60,7 +55,6 @@ export async function createCustomer(customer) {
       
       // execute the query
       const { rows } = await pool.query(queryText, queryParams)
-  
       // return rows;
       return [true, rows[0]];
     }
@@ -97,6 +91,8 @@ export async function updateCustomerById(id, updates) {
   queryParams.push(id);
 
   queryText += ` RETURNING *;`;
+
+  console.log(queryText)
 
   // create try catch
   try {

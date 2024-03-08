@@ -18,6 +18,14 @@ import {
 //   updateSaleById,
 //   deleteSaleById,
 // } from "./sales.js";
+import {
+  getSales,
+  getSaleById,
+  createSale,
+  updateSaleById,
+  deleteSaleById,
+} from "./sales.js";
+
 
 // Import your helper functions for your second resource here
 import {
@@ -35,15 +43,15 @@ const PORT = process.env.PORT;
 
 app.use(express.json()); // express.json() middleware is used to parse incoming JSON requests
 
-// Resource One Route Handlers
+// Customers Table Route Handlers
 
-// Endpoint to retrieve all <resource_one>
+// Endpoint to retrieve all <customers>
 app.get("/customers/", async function (req, res) {
   const customers = await getCustomers();
   res.status(200).json({ status: "success", payload: customers });
 });
 
-// Endpoint to retrieve a <resource_one> by id
+// Endpoint to retrieve a <customer> by id
 app.get("/customers/:id", async function (req, res) {
   const id = req.params.id;
   const customer = await getCustomerById(id);
@@ -56,7 +64,7 @@ app.get("/customers/:id", async function (req, res) {
   res.status(200).json({ status: "success", payload: customer });
 });
 
-// Endpoint to create a new <resource_one>
+// Endpoint to create a new <customer>
 app.post("/customers/", async function (req, res) {
   const data = req.body;
   const customer = await createCustomer(data);
@@ -69,7 +77,7 @@ app.post("/customers/", async function (req, res) {
   return res.status(200).json({ status: "success", payload: customer[1] });
 });
 
-// Endpoint to update a specific <resource_one> by id
+// Endpoint to update a specific <customer> by id
 app.patch("/customers/:id", async function (req, res) {
   const id = req.params.id;
   const data = req.body;
@@ -77,23 +85,21 @@ app.patch("/customers/:id", async function (req, res) {
   // Assume 404 status if the author is not found
   if (!customer) {
     return res
-      .status(404)
-      .json({ status: "fail", data: { msg: "Customer not found" } });
+      .status(404).json({ status: "fail", payload: { msg: "Customer not found" } });
   }
-  res.status(200).json({ status: "success", data: customer });
+  res.status(200).json({ status: "success", payload: customer });
 });
 
-// Endpoint to delete a specific <resource_one> by id
+// Endpoint to delete a specific <customer> by id
 app.delete("/customers/:id", async function (req, res) {
   const id = req.params.id;
   const customer = await deleteCustomerById(id);
   // Assume 404 status if the customer is not found
   if (!customer) {
     return res
-      .status(404)
-      .json({ status: "fail", data: { msg: "Customer not found" } });
+      .status(404).json({ status: "fail", payload: { msg: "Customer not found" } });
   }
-  res.status(200).json({ status: "success", data: customer });
+  res.status(200).json({ status: "success", payload: customer });
 });
 
 // Resource Two Route Handlers
@@ -117,6 +123,58 @@ app.patch("/sales/:id", async function (req, res) {});
 app.delete("/sales/:id", async function (req, res) {});
 
 // Resource Three Route Handlers
+    const sales = await getSales();
+    res.status(200).json({ status: "success", data: sales });
+  });
+  
+  // Endpoint to retrieve a <sale> by id
+  app.get("/sales/:id", async function (req, res) {
+    const id = req.params.id;
+    const sale = await getSaleById(id);
+    // Assume 404 status if sale is not found
+    if (!sale) {
+      return res
+      .status(404).json({status: "fail", data: { msg: "Sale not found" } })
+    }
+    res.status(200).json({ status: "success", data: sale });
+  })
+    
+  // Endpoint to create a new <sale>
+  app.post("/sales/", async function (req, res) {
+    const data = req.body;
+    const sale = await createSale(data);
+    if (!sale[0]) {
+      return res.status(404).json({status: "fail", data: { msg: sale[1] } })
+    }
+    return res.status(200).json({status: "success", data: sale[1] })
+  });
+  
+  // Endpoint to update a specific <sale> by id
+  app.patch("/sales/:id", async function (req, res) {
+  const id = req.params.id;
+  const data = req.body;
+  const sale = await updateSaleById(id, data);
+  // Assume 404 status if the sale is not found
+  if (!sale) {
+    return res
+      .status(404).json({ status: "fail", payload: { msg: "Sale not found" } });
+  }
+  res.status(200).json({ status: "success", payload: sale });
+  });
+  
+  // Endpoint to delete a specific <sale> by id
+  app.delete("/sales/:id", async function (req, res) {
+    const id = req.params.id;
+    const customer = await deleteSaleById(id);
+      // Assume 404 status if the customer is not found
+    if (!sale) {
+      return res
+        .status(404).json({ status: "fail", payload: { msg: "Sale not found" } });
+    }
+    res.status(200).json({ status: "success", payload: customer });
+  });
+
+  // Cars Table Route Handlers
 
 // Endpoint to retrieve all <cars>
 app.get("/cars/", async function (req, res) {
@@ -124,6 +182,7 @@ app.get("/cars/", async function (req, res) {
   res.status(200).json({ status: "success", data: cars });
 });
 
+// Endpoint to retrieve a <car> by id
 // Endpoint to retrieve a <car> by id
 app.get("/cars/:id", async function (req, res) {
   const id = req.params.id;
@@ -137,6 +196,7 @@ app.get("/cars/:id", async function (req, res) {
   res.status(200).json({ status: "success", payload: car });
 });
 
+// Endpoint to create a new <car>
 // Endpoint to create a new <car>
 app.post("/cars/", async function (req, res) {
   const data = req.body;
@@ -164,6 +224,7 @@ app.patch("/cars/:id", async function (req, res) {
   res.status(200).json({ status: "success", data: car });
 });
 
+// Endpoint to delete a specific <car> by id
 // Endpoint to delete a specific <car> by id
 app.delete("/cars/:id", async function (req, res) {
   const id = req.params.id;
