@@ -25,7 +25,7 @@ async function resetDatabase() {
             phone VARCHAR(16)
         );
     `);
-
+    // Create the cars table
     await pool.query(`
         CREATE TABLE cars (
             car_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -34,8 +34,7 @@ async function resetDatabase() {
             price DECIMAL NOT NULL
         );
     `);
-
-    // Create the sales table with a foreign key to the customers table
+    // Create the sales table with foreign key to the customers table
     await pool.query(`
         CREATE TABLE sales (
             sale_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

@@ -48,16 +48,10 @@ export async function createCustomer(customer) {
     try {
       if (!customer.name) {
         errorDisplay.push('Customer name')
-        // errorMsg = `customer name is null, please enter it correctly to complete the request`
-        // return [false, errorMsg]
       } if (!customer.email) {
         errorDisplay.push('Email')
-        // errorMsg = `email is null, please enter it correctly to complete the request`
-        // return [false, errorMsg]
       } if (!customer.phone) {
         errorDisplay.push('Phone')
-        // errorMsg = `phone is null, please enter it correctly to complete the request`
-        // return [false, errorMsg]
       }
       
       if (errorDisplay.length > 0) {
