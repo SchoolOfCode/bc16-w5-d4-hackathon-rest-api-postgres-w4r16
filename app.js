@@ -144,7 +144,7 @@ app.post("/cars/", async function (req, res) {
   if (!car[0]) {
     return res.status(404).json({
       status: "fail",
-      data: { msg: `Couldn't create customer: ${car[1]}` },
+      data: { msg: `Couldn't create car: ${car[1]}` },
     });
   }
   return res.status(200).json({ status: "success", data: car[1] });

@@ -11,10 +11,9 @@ export async function getCars() {
 
     //The queryRestul object has a method called rows which contains the retrieved cars
 
-    return queryResult.rows;
+    return queryResult.rows || null;
   } catch (error) {
     console.error("Error executing query", error);
-    return [];
   }
 }
 
@@ -31,16 +30,18 @@ export async function getCarById(id) {
     return queryResult.rows[0] || null;
   } catch (error) {
     console.error("Error executing query", error);
-    return [];
   }
 }
 
-export async function createCar(resource) {
+export async function createCar(car) {
   // Define the query that create a new car and return the newly created car
 
   try {
-    const queryText = `INSERT INTO cars (make, model, price) VALUES ($1, $2, $3) RETURNING *;`;
-    let errorMsg = "";
+    const queryText = `
+      INSERT INTO cars (make, model, price) 
+      VALUES ($1, $2, $3) 
+      RETURNING *;
+      `;
 
     //Assign the car parameters to an array
     const queryParams = [car.make, car.model, car.price];
@@ -48,21 +49,15 @@ export async function createCar(resource) {
 
     if (!car.make) {
       errorDisplay.push("Car Make");
-      // errorMsg = `Car make is null, please enter it correctly to complete the request`
-      // return [false, errorMsg]
     }
     if (!car.model) {
       errorDisplay.push("Model");
-      // errorMsg = `Model is null, please enter it correctly to complete the request`
-      // return [false, errorMsg]
     }
     if (!car.price) {
       errorDisplay.push("Price");
-      // errorMsg = `Price is null, please enter it correctly to complete the request`
-      // return [false, errorMsg]
     }
 
-    if (errorDisplay) {
+    if (errorDisplay.length > 0) {
       return [
         false,
         `${errorDisplay.join(", ")} is incorrect or missing, please enter it correctly to complete the request`,
@@ -74,7 +69,7 @@ export async function createCar(resource) {
 
     //The queryRestul object has a method called rows which contains the created car
 
-    return queryResult.rows[0] || null;
+    return [true, queryResult.rows[0] || null];
   } catch (error) {
     console.error("Error creating new car", error);
     throw error;
@@ -89,16 +84,16 @@ export async function updateCarById(id, updates) {
   let setParts = [];
   let queryParamIndex = 1;
 
-  if (updates.name) {
-    setParts.push(`name = $${queryParamIndex++}`);
+  if (updates.make) {
+    setParts.push(`make = $${queryParamIndex++}`);
     queryParams.push(updates.make);
   }
-  if (updates.email) {
-    setParts.push(`email = $${queryParamIndex++}`);
+  if (updates.model) {
+    setParts.push(`model = $${queryParamIndex++}`);
     queryParams.push(updates.model);
   }
-  if (updates.phone) {
-    setParts.push(`phone = $${queryParamIndex++}`);
+  if (updates.price) {
+    setParts.push(`price = $${queryParamIndex++}`);
     queryParams.push(updates.price);
   }
 
@@ -128,16 +123,26 @@ export async function updateCarById(id, updates) {
 }
 
 export async function deleteCarById(id) {
+  const selectQuery = `SELECT * FROM cars WHERE car_id = $1`
+
   try {
-    // Define the query that will delete the car and return the deleted car or null
-    const queryText = `DELETE * FROM cars WHERE car_id= $1`;
+    // Check if customer exists
+    const selectResult = await pool.query(selectQuery, [id])
 
-    // Send the query to the DB using the pool method. this will return an object which is stored in queryResult
+    const car = selectResult.rows[0];
 
-    const queryResult = await pull.query(queryText, id[0]);
+    if (!car) {
+      return null;
+    }
 
-    //Return the message "car deleted successfully"
-    return "Entry deleted successfully";
+    const deleteQuery = `
+      DELETE FROM cars
+      WHERE car_id = $1
+      `
+
+    await pool.query(deleteQuery, [id]);
+    
+    return car;
   } catch (error) {
     console.error(`Error deleting entry:`, error.message);
     throw error;
