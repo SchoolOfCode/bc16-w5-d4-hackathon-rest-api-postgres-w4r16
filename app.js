@@ -25,9 +25,9 @@ import {
 
 // Import your helper functions for your second resource here
 // import {
-//   getCars,
-//   getCarById,
-//   createCar,
+    getCars,
+    getCarById,
+    createCar,
 //   updateCarById,
 //   deleteCarById,
 // } from "./cars.js";

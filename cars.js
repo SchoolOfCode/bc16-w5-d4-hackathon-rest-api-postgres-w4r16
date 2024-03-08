@@ -24,7 +24,7 @@ export async function getCarById(id) {
 
   try{
   // Define the query that will return a customer with a a matching id or null
-    const queryText = `SELECT * FROM customers WHERE customer_id= $1`;
+    const queryText = `SELECT * FROM Cars WHERE car_id= $1`;
 
     // Send the query to the DB using the pool method. this will return an object which is stored in queryResult
     const queryResult = await pool.query(queryText, [id]);
@@ -43,6 +43,8 @@ export async function getCarById(id) {
 export async function createCar(resource) {
   
   // Define the query that create a new car and return the newly created car
+
+try {
   const queryText = `INSERT INTO Cars (make, model, price) VALUES ($1, $2, $3) RETURNING *;`
   let errorMsg = "";
 
@@ -50,7 +52,6 @@ export async function createCar(resource) {
   const queryParams =[car.make, car.model, car.price];
   let errorDisplay = []
 
-try {
       if (!car.make) {
         errorDisplay.push('Car Make')
         // errorMsg = `Car make is null, please enter it correctly to complete the request`
@@ -75,18 +76,35 @@ try {
 //The queryRestul object has a method called rows which contains the created car
 
 return queryResult.rows[0] || null
-
+ }
   catch (error) {
       console.error("Error creating new car", error);
-      throw error;
-    }
-}
+      throw error; }
+  }
+   
+
+
+export async function updateCarById(id, updates) {
+  // Query the database to update the car and return the newly updated car or null
+
+
 }
 
-export async function updateResourceThreeById(id, updates) {
-  // Query the database to update the resource and return the newly updated resource or null
-}
+export async function deleteCarById(id) {
 
-export async function deleteResourceThreeById(id) {
-  // Query the database to delete the resource and return the deleted resource or null
-}
+  Try{
+  // Define the query that will delete the car and return the deleted car or null
+  const queryText = `DELETE * FROM Cars WHERE car_id= $1`;
+
+  // Send the query to the DB using the pool method. this will return an object which is stored in queryResult
+
+  const queryResult = await pull.query(queryText, id[]);
+
+  //Return the message "car deleted successfully"
+  return "Entry deleted successfully";
+  }
+  catch(error){
+    console.error (`Error deleting entry:`, error.message);
+    throw error;
+  }
+  }
