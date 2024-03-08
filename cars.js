@@ -5,7 +5,7 @@ import { pool } from "./db/index.js";
 export async function getCars() {
   try {
     // Define the query that will return all cars
-    const queryText = `SELECT * FROM Cars`;
+    const queryText = `SELECT * FROM cars`;
 
     // Send the query to the DB using the pool method. this will return an object which is stored in queryResult
     const queryResult = await pool.query(queryText);
@@ -24,7 +24,7 @@ export async function getCarById(id) {
 
   try{
   // Define the query that will return a customer with a a matching id or null
-    const queryText = `SELECT * FROM Cars WHERE car_id= $1`;
+    const queryText = `SELECT * FROM cars WHERE car_id= $1`;
 
     // Send the query to the DB using the pool method. this will return an object which is stored in queryResult
     const queryResult = await pool.query(queryText, [id]);
@@ -45,7 +45,7 @@ export async function createCar(resource) {
   // Define the query that create a new car and return the newly created car
 
 try {
-  const queryText = `INSERT INTO Cars (make, model, price) VALUES ($1, $2, $3) RETURNING *;`
+  const queryText = `INSERT INTO cars (make, model, price) VALUES ($1, $2, $3) RETURNING *;`
   let errorMsg = "";
 
   //Assign the car parameters to an array
@@ -85,10 +85,52 @@ return queryResult.rows[0] || null
 
 
 export async function updateCarById(id, updates) {
-  // Query the database to update the car and return the newly updated car or null
+  // Query the database to update the car and return the newly updated resource or null
 
+  let queryText = `UPDATE cars SET `
+  let queryParams = [];
+  let setParts = [];
+  let queryParamIndex = 1;
 
+  if (updates.name) {
+    setParts.push(`name = $${queryParamIndex++}`);
+    queryParams.push(updates.make);
+  }
+  if (updates.email) {
+    setParts.push(`email = $${queryParamIndex++}`);
+    queryParams.push(updates.model);
+  }
+  if (updates.phone) {
+    setParts.push(`phone = $${queryParamIndex++}`)
+    queryParams.push(updates.price);
+  }
+
+  queryText += setParts.join(", ")
+  queryText += ` WHERE car_id = $${queryParamIndex++}`
+
+  queryParams.push(id);
+
+  queryText += ` RETURNING *;`;
+
+  // create try catch
+  try {
+    const carExists = await getCarById(id);
+
+    if (!carExists) { 
+      return false;
+    }
+
+    // execute query
+    const { rows } = await pool.query(queryText, queryParams)
+
+    // return data (rows)
+    return rows[0];
+  }
+  catch (error) {
+    console.error("Error updating car", error);
+  }
 }
+
 
 export async function deleteCarById(id) {
 

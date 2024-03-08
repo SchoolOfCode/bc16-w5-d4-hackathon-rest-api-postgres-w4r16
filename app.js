@@ -43,7 +43,6 @@ app.use(express.json()); // express.json() middleware is used to parse incoming 
 
 
 
-
 // Resource One Route Handlers
 
 // Endpoint to retrieve all <resource_one>
