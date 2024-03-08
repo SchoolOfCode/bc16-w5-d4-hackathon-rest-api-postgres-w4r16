@@ -67,17 +67,36 @@ app.post("/customers/", async function (req, res) {
   const data = req.body
   const customer = await createCustomer(data);
   if(!customer[0]) {
-    res.status(404).json({status: "fail", payload: {msg: `Couldn't create customer: ${customer[1]}`}})
+    return res.status(404).json({status: "fail", payload: {msg: `Couldn't create customer: ${customer[1]}`}})
   }
-  res.status(200).json({status: "success", payload: customer[1]})
+  return res.status(200).json({status: "success", payload: customer[1]})
 });
 
 // Endpoint to update a specific <resource_one> by id
 app.patch("/customers/:id", async function (req, res) {
+  const id = req.params.id;
+  const data = req.body;
+  const customer = await updateCustomerById(id, data);
+  // Assume 404 status if the author is not found
+  if (!customer) {
+    return res
+      .status(404)
+      .json({ status: "fail", data: { msg: "Customer not found" } });
+  }
+  res.status(200).json({ status: "success", data: customer });
 });
 
 // Endpoint to delete a specific <resource_one> by id
 app.delete("/customers/:id", async function (req, res) {
+  const id = req.params.id;
+  const customer = await deleteCustomerById(id);
+  // Assume 404 status if the customer is not found
+  if (!customer) {
+    return res
+      .status(404)
+      .json({ status: "fail", data: { msg: "Customer not found" } });
+  }
+  res.status(200).json({ status: "success", data: customer });
 });
 
 

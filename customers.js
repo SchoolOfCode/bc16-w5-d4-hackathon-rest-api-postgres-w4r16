@@ -69,8 +69,77 @@ export async function createCustomer(customer) {
 
 export async function updateCustomerById(id, updates) {
   // Query the database to update the resource and return the newly updated resource or null
+
+  let queryText = `UPDATE customers SET `
+  let queryParams = [];
+  let setParts = [];
+  let queryParamIndex = 1;
+
+  if (updates.name) {
+    setParts.push(`name = $${queryParamIndex++}`);
+    queryParams.push(updates.name);
+  }
+  if (updates.email) {
+    setParts.push(`email = $${queryParamIndex++}`);
+    queryParams.push(updates.email);
+  }
+  if (updates.phone) {
+    setParts.push(`phone = $${queryParamIndex++}`)
+    queryParams.push(updates.phone);
+  }
+
+  queryText += setParts.join(", ")
+  queryText += ` WHERE customer_id = $${queryParamIndex++}`
+
+  queryParams.push(id);
+
+  queryText += ` RETURNING *;`;
+
+  // create try catch
+  try {
+    const customerExists = await getCustomerById(id);
+
+    if (!customerExists) { 
+      return false;
+    }
+
+    // execute query
+    const { rows } = await pool.query(queryText, queryParams)
+
+    // return data (rows)
+    return rows[0];
+  }
+  catch (error) {
+    console.error("Error updating customer", error);
+  }
 }
 
 export async function deleteCustomerById(id) {
-  // Query the database to delete the resource and return the deleted resource or null
+  // Query the database to delete the resource and return the deleted resource or nul
+
+  const selectQuery = `SELECT * FROM customers WHERE customer_id = $1`
+
+  try {
+    // Check if customer exists
+    const selectResult = await pool.query(selectQuery, [id])
+
+    const customer = selectResult.rows[0];
+
+    if (!customer) {
+      return null;
+    }
+
+    const deleteQuery = `
+      DELETE FROM customers
+      WHERE customer_id = $1
+      `
+
+    await pool.query(deleteQuery, [id]);
+    
+    return customer;
+  }
+  catch (error) {
+    console.error("Error deleting customer", error);
+    throw error
+  }
 }
