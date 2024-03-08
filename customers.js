@@ -60,7 +60,7 @@ export async function createCustomer(customer) {
         // return [false, errorMsg]
       }
       
-      if (errorDisplay) {
+      if (errorDisplay.length > 0) {
       return [false, `${errorDisplay.join(', ')} is incorrect or missing, please enter it correctly to complete the request`]
       }
       
